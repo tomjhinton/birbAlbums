@@ -40,9 +40,6 @@ const fonts = ['Passio', 'Olondona', 'Tapeworm', 'murmure', 'ferrite']
 
 const notes = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'A8']
 
-const notesHigh = ['E5','F5','G5','A5','D5','E6','F6','G6','A6','D6']
-
-
 const notesLow = ['E2','F2','G2','A2','D2','E3','F3','G3','A3','D3']
 
 
@@ -130,8 +127,7 @@ if (Tone.Transport.state !== 'started') {
       synthArr[Math.floor(Math.random() * synthArr.length)].triggerAttackRelease(note, .5, time)
     },
     [notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]], notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]]]).start(0)
-  // seq2.loop= false
-  // console.log(seq2)
+
 
 
 
