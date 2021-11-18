@@ -29,7 +29,7 @@ bakedTexture.encoding = THREE.sRGBEncoding
 const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture,
   side: THREE.DoubleSide})
 
-const birds = ['Crows','Peacocks','Doves','Sparrows','Geese','Ostriches','Pigeons','Turkeys', 'Owls', 'Hummingbirds', 'Cranes', 'Storks', 'Gulls', 'Chickens', 'Ducks']
+const birds = ['Crows','Peacocks','Doves','Sparrows','Geese','Ostriches','Pigeons','Turkeys', 'Owls',  'Cranes', 'Storks', 'Gulls', 'Chickens', 'Ducks']
 
 const passio = new FontFace('Passio', 'url(Passio-Graphis.otf)')
 
