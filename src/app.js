@@ -24,15 +24,15 @@ const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture,
 
 const birds = ['Crows','Peacocks','Doves','Sparrows','Geese','Ostriches','Pigeons','Turkeys']
 
-const passio = new FontFace('Passio', 'url(/Passio-Graphis.otf)')
+const passio = new FontFace('Passio', 'url(Passio-Graphis.otf)')
 
-const olondona = new FontFace('Olondona', 'url(/Olondona.otf)')
+const olondona = new FontFace('Olondona', 'url(Olondona.otf)')
 
-const tapeworm = new FontFace('Tapeworm', 'url(/Tapeworm-Regular.otf)')
+const tapeworm = new FontFace('Tapeworm', 'url(Tapeworm-Regular.otf)')
 
-const murmure = new FontFace('murmure', 'url(/le-murmure.otf)')
+const murmure = new FontFace('murmure', 'url(le-murmure.otf)')
 
-const ferrite = new FontFace('ferrite', 'url(/FerriteCoreDX-Regular.otf)')
+const ferrite = new FontFace('ferrite', 'url(FerriteCoreDX-Regular.otf)')
 
 const fontsL = [passio, olondona, tapeworm, murmure, ferrite]
 
