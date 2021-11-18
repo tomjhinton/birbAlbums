@@ -29,7 +29,7 @@ bakedTexture.encoding = THREE.sRGBEncoding
 const bakedMaterial = new THREE.MeshBasicMaterial({ map: bakedTexture,
   side: THREE.DoubleSide})
 
-const birds = ['Crows','Peacocks','Doves','Sparrows','Geese','Ostriches','Pigeons','Turkeys']
+const birds = ['Crows','Peacocks','Doves','Sparrows','Geese','Ostriches','Pigeons','Turkeys', 'Owls', 'Hummingbirds', 'Cranes', 'Storks', 'Gulls', 'Chickens', 'Ducks']
 
 const passio = new FontFace('Passio', 'url(Passio-Graphis.otf)')
 
@@ -180,7 +180,7 @@ window.addEventListener('resize', () =>{
 const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, .1, 2000)
 camera.position.x = -15
 camera.position.y = 20
-camera.position.z = 45
+camera.position.z = 55
 scene.add(camera)
 
 
