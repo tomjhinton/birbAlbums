@@ -1,3 +1,9 @@
+/*For @sableRaph's weekly Creative Coding Challenge. The Challenge topic was Album Cover's.
+Made a little model in blender, baked the texture. Loaded it with three.js. Uses cannon to do physics simulations. Generates a new albu cover if you click the counter. Band names layered over by creating a hidden Canvas element and using that as a texture within a glsl shader. New shaders created for each cover with some template literals to allow for pretending Math.random() is me being creative. Does have a very hacky and horrible musical element, just pretend it was mastered by Rashad Becker and released on PAN or whatever. That's done with Tone.js. Pretty sure I only used samples that come with Tidal so should be ok to stick wherever? 
+*/
+
+
+
 import './style.scss'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
@@ -12,6 +18,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 const canvas = document.querySelector('canvas.webgl')
 
 import cannonDebugger from 'cannon-es-debugger'
+
 const textureLoader = new THREE.TextureLoader()
 
 const bakedTexture = textureLoader.load('bake2.jpg')
@@ -38,9 +45,6 @@ const fontsL = [passio, olondona, tapeworm, murmure, ferrite]
 
 const fonts = ['Passio', 'Olondona', 'Tapeworm', 'murmure', 'ferrite']
 
-const notes = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'A8']
-
-const notesLow = ['E2','F2','G2','A2','D2','E3','F3','G3','A3','D3']
 
 
 
@@ -49,140 +53,8 @@ fontsL.map(x => {
 })
 const scene = new THREE.Scene()
 const world = new CANNON.World()
-let seq, seq2, seq3
-
-const synth = new Tone.PolySynth(Tone.MembraneSynth, {
-  envelope: {
-    attack: 0.02,
-    decay: 0.1,
-    sustain: 0.3,
-    release: 1
-  }
-}).toDestination()
-
-const bass = new Tone.PolySynth(Tone.DuoSynth, {
-  envelope: {
-    attack: 0.02,
-    decay: .01,
-    sustain: .1,
-    release: 1
-  }
 
 
-
-
-}).toDestination()
-
-
-
-const metal = new Tone.PolySynth(Tone.MetalSynth, {
-  envelope: {
-    attack: 0.02,
-    decay: .01,
-    sustain: .1,
-    release: 1
-  }
-
-
-
-
-}).toDestination()
-
-const am = new Tone.PolySynth(Tone.AMSynth, {
-  envelope: {
-    attack: 0.04,
-    decay: .01,
-    sustain: .1,
-    release: 1
-  }
-
-
-
-
-}).toDestination()
-
-
-let synthArr = [ synth, metal]
-
-let synthArr2 = [ bass, am]
-
-document.querySelector('#tone-play-toggle').addEventListener('click', (e) => {
-  let index = 0
-  // sampler.triggerAttackRelease(["A2", "E1", "G1", "B1"], 0.5);
-if (Tone.Transport.state !== 'started') {
-  Tone.start()
-   seq = new Tone.Sequence((time, note) => {
-	sampler.triggerAttackRelease(note, 0.9, time);
-	// subdivisions are given as subarrays
-}, [notes[Math.floor(Math.random() * notes.length)]
-    , [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]
-    , notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]
-    , notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]]).start(0);
-
-
-
-    seq2 = new Tone.Pattern((time, note) => {
-
-
-      synthArr[Math.floor(Math.random() * synthArr.length)].triggerAttackRelease(note, .5, time)
-    },
-    [notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]], notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]]]).start(0)
-
-
-
-
-
-
-
-
-    seq3 = new Tone.Pattern((time, note) => {
-      synthArr2[Math.floor(Math.random() * synthArr2.length)].triggerAttackRelease(note, .05, time)
-    },
-    [notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]], notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]]).start(0)
-
-    seq.probability = Math.random() * 10
-    seq2.probability = Math.random() * 10
-    seq3.probability = Math.random() * 10
-    // seq.loop = false
-    // seq2.loop = false
-    // seq3.loop = false
-    console.log(seq)
-
-    Tone.Transport.start()
-  } else {
-    Tone.Transport.stop()
-    // seq.stop()
-    // seq2.stop()
-    // seq3.stop()
-    // seq.cancel()
-    // seq2.cancel()
-    // seq3.cancel()
-    // seq.clear()
-    // seq2.clear()
-    // seq3.clear()
-    seq.dispose()
-    seq2.dispose()
-    seq3.dispose()
-
-  }
-
-})
-
-const sampler = new Tone.Sampler({
-	urls: {
-		A1: "clap.wav",
-		B2: "kick.wav",
-    C3: "VEC1 BD Distortion 06.wav",
-    D4: "VEC1 BD Distortion 37.wav",
-    E5: "VEC1 BD Distortion 39.wav",
-    F6: "VEC1 BD Distortion 41.wav",
-    G7: "VEC1 BD Distortion 52.wav",
-    A8: "VEC1 BD Distortion 53.wav"
-	},
-	onload: () => {
-		// sampler.triggerAttackRelease(["C1", "E1", "G1", "B1"], 0.5);
-	}
-}).toDestination()
 
 
 //Desk
@@ -205,7 +77,7 @@ world.addBody(playerBody)
 const meshDesk = new THREE.Mesh(new THREE.BoxGeometry(15.4, 10, 10), new THREE.MeshBasicMaterial())
 meshDesk.position.y = -5
 meshDesk.position.x = 3
-// scene.add(meshDesk)
+
 
 
 
@@ -214,7 +86,9 @@ meshDesk.position.x = 3
 // cannonDebugger(scene, world.bodies, )
 
 
-// scene.background = new THREE.Color( 0xffffff )
+
+// Loading Bar Stuff
+
 const loadingBarElement = document.querySelector('.loading-bar')
 const loadingBarText = document.querySelector('.loading-bar-text')
 const loadingManager = new THREE.LoadingManager(
@@ -273,6 +147,10 @@ const sizes = {
   height: window.innerHeight
 }
 
+
+
+//Resizing handler
+
 window.addEventListener('resize', () =>{
 
 
@@ -304,10 +182,9 @@ camera.position.x = -15
 camera.position.y = 20
 camera.position.z = 45
 scene.add(camera)
-// console.log(camera)
 
-const helper = new THREE.CameraHelper( camera );
-// scene.add( helper );
+
+
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
@@ -326,46 +203,37 @@ const renderer = new THREE.WebGLRenderer({
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-// renderer.setClearColor( 0x000000, 1)
+
 const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
 
 
 
-
-
 renderer.domElement.addEventListener( 'pointerup', onClick, false )
 
-// window.addEventListener('mousemove', function (e) {
-//
-//
-//   mouse.x =  (e.clientX / window.innerWidth) * 2 - 1
-//   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-//
-//
-// })
+
+//Drop
 
 function onClick(event) {
   event.preventDefault()
 
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
   mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
-  // console.log(mouse)
+
   raycaster.setFromCamera( mouse, camera )
-  // console.log(raycaster.ray.direction)
-  //
+
   var intersects = raycaster.intersectObjects( intersectsArr, true )
 
   if ( intersects.length > 0 ) {
 
     // console.log(intersects[0].point)
-    createBox(4, .15, 4, { x: intersects[0].point.x,
+    createRecord(4, .15, 4, { x: intersects[0].point.x,
       y: (objectsToUpdate.length/10)+1,
       z: intersects[0].point.z
     })
   }
 
-  // console.log('hiya')
+
 
 }
 const objectsToUpdate = []
@@ -398,19 +266,19 @@ world.defaultContactMaterial = defaultContactMaterial
 
 
 
-const createBox = (width, height, depth, position) =>{
+const createRecord = (width, height, depth, position) =>{
   const mat = new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff })
 
   const canvas = document.createElement('canvas')
-
   canvas.id = 'textBox'+objectsToUpdate.length
   canvas.width = 1000
   canvas.height = 1000
-
   canvas.style.display = 'none'
   document.body.appendChild(canvas)
 
   const textTexture = document.getElementById("textBox"+objectsToUpdate.length)
+
+
 
   const glslArr = [
     `triangleGrid(vUv, ${Math.random()}, ${Math.random() /1000},${Math.random() /100})`,
@@ -419,6 +287,8 @@ const createBox = (width, height, depth, position) =>{
 
     'hexf'
   ]
+
+
 
   const uvArr = [`brownConradyDistortion(vUv, ${Math.random() * 10.}, ${Math.random() * 10.})`,
 
@@ -436,8 +306,12 @@ const createBox = (width, height, depth, position) =>{
 
   var ctx = canvas.getContext('2d')
   ctx.fillStyle = 'white'
+  let font = fonts[Math.floor(Math.random()* fonts.length)]
 
-  ctx.font = '100px ' + fonts[Math.floor(Math.random()* fonts.length)]
+  ctx.font = '100px ' + font
+  if(font === 'Tapeworm' || font === 'ferrite'){
+    ctx.font = '70px ' + font
+  }
 
   ctx.fillText('The ' + birds[Math.floor(Math.random()* birds.length)], 100, 200)
 
@@ -632,10 +506,7 @@ const createBox = (width, height, depth, position) =>{
   })
 
 }
-// const light = new THREE.AmbientLight( 0x404040 )
-// scene.add( light )
-// const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 )
-// scene.add( directionalLight )
+
 
 const floorShape = new CANNON.Plane()
 const floorBody = new CANNON.Body()
@@ -703,3 +574,131 @@ const tick = () =>{
 }
 
 tick()
+
+
+
+
+/// Hacky horrible sounds bit
+
+let seq, seq2, seq3
+
+const notes = ['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'A8']
+
+const notesLow = ['E2','F2','G2','A2','D2','E3','F3','G3','A3','D3']
+
+
+const synth = new Tone.PolySynth(Tone.MembraneSynth, {
+  envelope: {
+    attack: 0.02,
+    decay: 0.1,
+    sustain: 0.3,
+    release: 1
+  }
+}).toDestination()
+
+const bass = new Tone.PolySynth(Tone.DuoSynth, {
+  envelope: {
+    attack: 0.02,
+    decay: .01,
+    sustain: .1,
+    release: 1
+  }
+
+
+
+
+}).toDestination()
+
+
+
+const metal = new Tone.PolySynth(Tone.MetalSynth, {
+  envelope: {
+    attack: 0.02,
+    decay: .01,
+    sustain: .1,
+    release: 1
+  }
+
+
+
+
+}).toDestination()
+
+const am = new Tone.PolySynth(Tone.AMSynth, {
+  envelope: {
+    attack: 0.04,
+    decay: .01,
+    sustain: .1,
+    release: 1
+  }
+
+
+
+
+}).toDestination()
+
+
+let synthArr = [ synth, metal]
+
+let synthArr2 = [ bass, am]
+
+document.querySelector('#tone-play-toggle').addEventListener('click', (e) => {
+  let index = 0
+  // sampler.triggerAttackRelease(["A2", "E1", "G1", "B1"], 0.5);
+if (Tone.Transport.state !== 'started') {
+  Tone.start()
+   seq = new Tone.Sequence((time, note) => {
+	sampler.triggerAttackRelease(note, 0.9, time);
+	// subdivisions are given as subarrays
+}, [notes[Math.floor(Math.random() * notes.length)]
+    , [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]
+    , notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]
+    , notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]]).start(0);
+
+
+
+    seq2 = new Tone.Pattern((time, note) => {
+
+
+      synthArr[Math.floor(Math.random() * synthArr.length)].triggerAttackRelease(note, .5, time)
+    },
+    [notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]], notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)], [notesLow[Math.floor(Math.random() * notesLow.length)], notesLow[Math.floor(Math.random() * notesLow.length)]]]).start(0)
+
+
+
+    seq3 = new Tone.Pattern((time, note) => {
+      synthArr2[Math.floor(Math.random() * synthArr2.length)].triggerAttackRelease(note, .05, time)
+    },
+    [notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]], notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)], [notes[Math.floor(Math.random() * notes.length)], notes[Math.floor(Math.random() * notes.length)]]]).start(0)
+
+    seq.probability = Math.random() * 10
+    seq2.probability = Math.random() * 10
+    seq3.probability = Math.random() * 10
+
+
+    Tone.Transport.start()
+  } else {
+    Tone.Transport.stop()
+    seq.dispose()
+    seq2.dispose()
+    seq3.dispose()
+
+  }
+
+})
+
+const sampler = new Tone.Sampler({
+	urls: {
+		A1: "clap.wav",
+		B2: "kick.wav",
+    C3: "VEC1 BD Distortion 06.wav",
+    D4: "VEC1 BD Distortion 37.wav",
+    E5: "VEC1 BD Distortion 39.wav",
+    F6: "VEC1 BD Distortion 41.wav",
+    G7: "VEC1 BD Distortion 52.wav",
+    A8: "VEC1 BD Distortion 53.wav"
+	},
+	onload: () => {
+
+	}
+}).toDestination()
