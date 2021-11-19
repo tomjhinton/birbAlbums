@@ -1,5 +1,13 @@
-/*For @sableRaph's weekly Creative Coding Challenge. The Challenge topic was Album Cover's.
-Made a little model in blender, baked the texture. Loaded it with three.js. Uses cannon to do physics simulations. Generates a new album cover if you click the counter. Band names layered over by creating a hidden Canvas element and using that as a texture within a glsl shader. New shaders created for each cover with some template literals to allow for pretending Math.random() is me being creative. Does have a very hacky and horrible musical element (TBF it's not noise, gabba or grindcore so like on the friendlier side of my tastes but like I'm aware it's neither good nor pleasant), just pretend it was mastered by Rashad Becker and released on PAN or whatever. That's done with Tone.js. Pretty sure I only used samples that come with Tidal so should be ok to stick wherever?
+/*For @sableRaph's weekly Creative Coding Challenge.
+The Challenge topic was Album Cover's.
+Made a little model in blender, baked the texture.
+Loaded it with three.js.
+Uses cannon to do physics simulations. Generates a new album cover if you click the counter.
+Band names layered over by creating a hidden Canvas element and using that as a texture within a glsl shader.
+New shaders created for each cover with some template literals to allow for pretending Math.random() is me being creative.
+Does have a very hacky and horrible musical element (TBF it's not noise, gabba or grindcore so like on the friendlier side of my tastes but like I'm aware it's neither good nor pleasant), just pretend it was mastered by Rashad Becker and released on PAN or whatever.
+That's done with Tone.js.
+Pretty sure I only used samples that come with Tidal so should be ok to stick wherever?
 */
 
 
@@ -17,7 +25,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 const canvas = document.querySelector('canvas.webgl')
 
-import cannonDebugger from 'cannon-es-debugger'
+// import cannonDebugger from 'cannon-es-debugger'
 
 const textureLoader = new THREE.TextureLoader()
 
@@ -51,6 +59,9 @@ const fonts = ['Passio', 'Olondona', 'Tapeworm', 'murmure', 'ferrite']
 fontsL.map(x => {
   document.fonts.add(x)
 })
+
+
+
 const scene = new THREE.Scene()
 const world = new CANNON.World()
 
@@ -65,7 +76,7 @@ const boxBody = new CANNON.Body({ mass: 0, shape: boxShape })
 boxBody.position.y = -5
 world.addBody(boxBody)
 
-
+//For some reason this isn't working well but think it's a Cannon problem not a me problem.
 const recordPlayer = new CANNON.Vec3(2.3, 1.5, 2.3)
 const playerShape = new CANNON.Box(recordPlayer)
 const playerBody = new CANNON.Body({ mass: 0, shape: playerShape })
@@ -73,6 +84,11 @@ playerBody.position.x = -7.1
 playerBody.position.y = -1.
 playerBody.position.z = -.2
 world.addBody(playerBody)
+
+
+//Hidden object so I can use the raycaster to drop stuff on it
+//Actually made it a bit smaller than it should be because stuff kept falling
+//through thre record player so made it harder to drop stuff on it by making the desk under it not clickable.
 
 const meshDesk = new THREE.Mesh(new THREE.BoxGeometry(15.4, 10, 10), new THREE.MeshBasicMaterial())
 meshDesk.position.y = -5
@@ -189,8 +205,9 @@ scene.add(camera)
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+
+//Stops you looking under the model, because it's never polite to peak under someones model.
 controls.maxPolarAngle = Math.PI / 2 - 0.1
-//controls.enableZoom = false;
 
 /**
  * Renderer
@@ -212,7 +229,8 @@ const mouse = new THREE.Vector2()
 renderer.domElement.addEventListener( 'pointerup', onClick, false )
 
 
-//Drop
+//Drop records function
+//Uses the raycaster to find the hidden mesh.
 
 function onClick(event) {
   event.preventDefault()
@@ -226,7 +244,6 @@ function onClick(event) {
 
   if ( intersects.length > 0 ) {
 
-    // console.log(intersects[0].point)
     createRecord(4, .15, 4, { x: intersects[0].point.x,
       y: (objectsToUpdate.length/10)+1,
       z: intersects[0].point.z
@@ -266,9 +283,15 @@ world.defaultContactMaterial = defaultContactMaterial
 
 
 
+//This is where the magic happens.
+
 const createRecord = (width, height, depth, position) =>{
+
+
   const mat = new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff })
 
+  //To add text to a shader, I create a canvas element
+  //Write on it, hide it, set it as a three.js texture
   const canvas = document.createElement('canvas')
   canvas.id = 'textBox'+objectsToUpdate.length
   canvas.width = 1000
@@ -280,6 +303,24 @@ const createRecord = (width, height, depth, position) =>{
 
 
 
+
+
+  var ctx = canvas.getContext('2d')
+  ctx.fillStyle = 'white'
+  const font = fonts[Math.floor(Math.random()* fonts.length)]
+
+  ctx.font = '100px ' + font
+  if(font === 'Tapeworm' || font === 'ferrite'){
+    ctx.font = '70px ' + font
+  }
+
+  ctx.fillText('The ' + birds[Math.floor(Math.random()* birds.length)], 100, 200)
+
+
+  //Stuck some glsl functions with randomised pieces in an array with template literals
+
+
+
   const glslArr = [
     `triangleGrid(vUv, ${Math.random()}, ${Math.random() /1000},${Math.random() /100})`,
 
@@ -287,7 +328,6 @@ const createRecord = (width, height, depth, position) =>{
 
     'hexf'
   ]
-
 
 
   const uvArr = [`brownConradyDistortion(vUv, ${Math.random() * 10.}, ${Math.random() * 10.})`,
@@ -304,18 +344,8 @@ const createRecord = (width, height, depth, position) =>{
 
   ]
 
-  var ctx = canvas.getContext('2d')
-  ctx.fillStyle = 'white'
-  let font = fonts[Math.floor(Math.random()* fonts.length)]
+  //Three.js mesh, uses an array to set the different sides as different materials
 
-  ctx.font = '100px ' + font
-  if(font === 'Tapeworm' || font === 'ferrite'){
-    ctx.font = '70px ' + font
-  }
-
-  ctx.fillText('The ' + birds[Math.floor(Math.random()* birds.length)], 100, 200)
-
-  //Three.js mesh
   const mesh = new THREE.Mesh(boxGeometry, [mat, mat,  new THREE.ShaderMaterial({
     depthWrite: true,
     uniforms:
@@ -483,6 +513,7 @@ const createRecord = (width, height, depth, position) =>{
           }
       `
   }), mat, mat,mat ])
+
   mesh.castShadow = true
   mesh.position.copy(position)
   mesh.scale.set(width, height, depth)
@@ -521,9 +552,13 @@ floorBody.position.y = -9
 world.addBody(floorBody)
 
 let sceneGroup, room
-const intersectsArr = []
 
+const intersectsArr = []
 intersectsArr.push(meshDesk)
+
+
+//Model stuff, made it in blexture, baked the texture.
+
 gtlfLoader.load(
   'recordStore.glb',
   (gltf) => {
@@ -543,6 +578,8 @@ gtlfLoader.load(
   }
 )
 
+
+//Animation stuff.
 
 const clock = new THREE.Clock()
 let oldElapsedTime = 0
@@ -638,9 +675,9 @@ const am = new Tone.PolySynth(Tone.AMSynth, {
 }).toDestination()
 
 
-let synthArr = [ synth, metal]
+const synthArr = [ synth, metal]
 
-let synthArr2 = [ bass, am]
+const synthArr2 = [ bass, am]
 
 document.querySelector('#tone-play-toggle').addEventListener('click', (e) => {
   let index = 0
