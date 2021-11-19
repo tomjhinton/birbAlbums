@@ -322,7 +322,7 @@ const createRecord = (width, height, depth, position) =>{
 
 
   const glslArr = [
-    `triangleGrid(vUv, ${Math.random()}, ${Math.random() /1000},${Math.random() /100})`,
+    `triangleGrid(uv, ${Math.random()}, ${Math.random() /1000},${Math.random() /100})`,
 
     `cnoise(uv * ${Math.random() * 50.})`,
 
@@ -340,7 +340,12 @@ const createRecord = (width, height, depth, position) =>{
 
     'vUv',
 
+    'vUv',
+
+    `uvRipple(vUv, ${Math.random()})`,
+
     'vUv'
+
 
   ]
 
@@ -391,6 +396,19 @@ const createRecord = (width, height, depth, position) =>{
       uv = (uv * .5 + .5);	// restore -> [0:1]
       return uv;
   }
+
+  vec2 uvRipple( vec2 uv, float intensity){
+
+	vec2 p =  vUv * 2.0 - 1.0;
+
+
+    float cLength=length(p);
+
+     uv= uv +(p/cLength)*cos(cLength*15.0)*intensity;
+
+     return uv;
+
+}
 
 
 
@@ -494,6 +512,8 @@ const createRecord = (width, height, depth, position) =>{
 
               vec4 tex = texture2D(uTexture, vUv);
 
+              vec4 tex2 = texture2D(uTexture, vec2(vUv.x-.005, vUv.y +.005));
+
               vec4 hex_uv = getHex(uv * ${Math.random() * 20});
 
               float hexf = stroke(hex(hex_uv.xy), ${Math.random()}, ${Math.random()});
@@ -501,15 +521,24 @@ const createRecord = (width, height, depth, position) =>{
 
               float r = ${glslArr[Math.floor(Math.random()*glslArr.length)]};
 
+              uv = ${uvArr[Math.floor(Math.random()* uvArr.length)]};
+
             	float g = ${glslArr[Math.floor(Math.random()*glslArr.length)]};
+
+              uv = ${uvArr[Math.floor(Math.random()* uvArr.length)]};
 
               float b = ${glslArr[Math.floor(Math.random()*glslArr.length)]};
 
+              uv = ${uvArr[Math.floor(Math.random()* uvArr.length)]};
+
               vec3 color = vec3(r, g, b);
+
 
               color = mix(color, 1.-color, ${glslArr[Math.floor(Math.random()*glslArr.length)]} );
 
-              gl_FragColor = vec4(color, 1.)+ tex + tex + tex;
+              color = mix(color, 1.-color, tex2.rgb);
+
+              gl_FragColor = vec4(color, 1.)+tex;
           }
       `
   }), mat, mat,mat ])
